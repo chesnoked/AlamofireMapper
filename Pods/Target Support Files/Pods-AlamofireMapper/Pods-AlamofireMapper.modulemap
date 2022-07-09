@@ -1,0 +1,6 @@
+module Pods_AlamofireMapper {
+  umbrella header "Pods-AlamofireMapper-umbrella.h"
+
+  export *
+  module * { export * }
+}
