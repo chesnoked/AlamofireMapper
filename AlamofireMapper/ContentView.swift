@@ -10,13 +10,14 @@ import Alamofire
 import AlamofireObjectMapper
 
 struct ContentView: View {
-    
-    var users = [Data]()
+  
+    @State var users = [Data]()
     
     var body: some View {
         
         Text("Hello, world!")
             .padding()
+        
             .onAppear {
                 getUsers()
             }
@@ -31,9 +32,17 @@ struct ContentView: View {
             headers: nil)
         .responseObject { (response: DataResponse<UsersResponse>) in
             if let result = response.result.value {
-                //self.users = result.users ?? []
+                users = result.users ?? []
+                showUsers()
             }
-            
+
+        }
+    }
+    
+    func showUsers() {
+        users.forEach { user in
+            guard let userFirstName = user.firstName else { return }
+            print(userFirstName)
         }
     }
 }
