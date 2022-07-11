@@ -12,15 +12,43 @@ import AlamofireObjectMapper
 struct ContentView: View {
   
     @State var users = [Data]()
+    @State var allUsers: [String] = []
+    @State var loading: Bool = false
     
     var body: some View {
         
-        Text("Hello, world!")
-            .padding()
-        
-            .onAppear {
+        NavigationView {
+                
+                List {
+                    if loading {
+                        ForEach(allUsers, id: \.self) { user in
+                            Text(user)
+                        }
+                    }
+                }
+                
+            
+           
+            .navigationBarTitle("Users")
+        }
+        .navigationViewStyle(StackNavigationViewStyle())
+        Button(action: {
                 getUsers()
+        }, label: {
+            ZStack(alignment: .center) {
+                RoundedRectangle(cornerRadius: 25.0)
+                    .fill(Color.black)
+                    .frame(width: 150, height: 55)
+                
+                Text("Show users")
+                    .font(.headline)
+                    .foregroundColor(.yellow)
             }
+            
+        })
+        
+        
+        
     }
     
     func getUsers() {
@@ -33,16 +61,17 @@ struct ContentView: View {
         .responseObject { (response: DataResponse<UsersResponse>) in
             if let result = response.result.value {
                 users = result.users ?? []
-                showUsers()
+                // show users
+                var count = 0
+                users.forEach { user in
+                    guard let userFirstName = user.firstName else { return }
+                    allUsers.append(userFirstName)
+                    print(allUsers[count])
+                    count += 1
+                }
+                loading = true
             }
 
-        }
-    }
-    
-    func showUsers() {
-        users.forEach { user in
-            guard let userFirstName = user.firstName else { return }
-            print(userFirstName)
         }
     }
 }
