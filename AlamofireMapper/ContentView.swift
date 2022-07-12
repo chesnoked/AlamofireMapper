@@ -4,6 +4,9 @@
 //
 //  Created by Evgeniy Safin on 09.07.2022.
 //
+//var firstName : String?
+//var id : Int?
+//var lastName : String?
 
 import SwiftUI
 import Alamofire
@@ -12,7 +15,7 @@ import AlamofireObjectMapper
 struct ContentView: View {
   
     @State var users = [Data]()
-    @State var allUsers: [String] = []
+    @State var allUsers: [Int : (String, String)] = [:]
     @State var loading: Bool = false
     
     var body: some View {
@@ -21,9 +24,9 @@ struct ContentView: View {
                 
                 List {
                     if loading {
-                        ForEach(allUsers, id: \.self) { user in
-                            Text(user)
-                        }
+//                        ForEach(allUsers.keys, id: \.self) { user in
+//                            Text("123")
+//                        }
                     }
                 }
                 
@@ -62,12 +65,14 @@ struct ContentView: View {
             if let result = response.result.value {
                 users = result.users ?? []
                 // show users
-                var count = 0
                 users.forEach { user in
+                    guard let userID = user.id else { return }
                     guard let userFirstName = user.firstName else { return }
-                    allUsers.append(userFirstName)
-                    print(allUsers[count])
-                    count += 1
+                    guard let userLastName = user.lastName else { return }
+                    allUsers[userID] = (userFirstName, userLastName)
+                }
+                for (userID , (userFirstName, userLastName)) in allUsers {
+                    print("\(userID): \(userFirstName) \(userLastName)")
                 }
                 loading = true
             }
